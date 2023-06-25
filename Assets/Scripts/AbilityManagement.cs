@@ -45,17 +45,18 @@ public class AbilityManagement : MonoBehaviour
             Vector3 loc = new(transform.position.x - 1.0f, transform.position.y + 0.5f, transform.position.z + 1.0f);
             //AbilityListからランダムに3つ取得しRandomAbilityListに格納
 
-                for (int i = 0; i < 3; i++)
-                {
-                    int index = Random.Range(0, AbilityList.Count);
-                    RandomAbilityList.Add(AbilityList[index]);
-                    AbilityList.RemoveAt(index);
-                    AbilityName = RandomAbilityList[i];
-                    Debug.Log(AbilityName);
-                    Instantiate(AbilityOrb, loc, transform.rotation);
-                    loc += new Vector3(1.0f, 0, 0);
-                }
-                AbilitySelect();
+            for (int i = 0; i < 3; i++)
+            {
+                int index = Random.Range(0, AbilityList.Count);
+                RandomAbilityList.Add(AbilityList[index]);
+                AbilityList.RemoveAt(index);
+                AbilityName = RandomAbilityList[i];
+                Debug.Log(AbilityName);
+                GameObject orbInstance = Instantiate(AbilityOrb, loc, transform.rotation);
+                orbInstance.GetComponentInChildren<AbilityText>().abilityName = AbilityName;
+                loc += new Vector3(1.0f, 0, 0);
+            }
+            AbilitySelect();
         }
     }
 
