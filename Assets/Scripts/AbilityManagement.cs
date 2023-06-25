@@ -54,7 +54,6 @@ public class AbilityManagement : MonoBehaviour
                     Debug.Log(AbilityName);
                     Instantiate(AbilityOrb, loc, transform.rotation);
                     loc += new Vector3(1.0f, 0, 0);
-                    Debug.Log(AbilityName);
                 }
                 AbilitySelect();
         }

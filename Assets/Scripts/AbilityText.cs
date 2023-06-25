@@ -13,6 +13,7 @@ public class AbilityText : MonoBehaviour
         {
             instance = this;
         }
+        this.GetComponent<TextMeshProUGUI>().text = string.Format(AbilityManagement.instance.AbilityName);
     }
     // Start is called before the first frame update
     void Start()
