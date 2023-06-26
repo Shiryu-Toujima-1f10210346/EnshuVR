@@ -16,7 +16,11 @@ public class AbilityManagement : MonoBehaviour
     }
 
     //AbilityList
+
     public int Multi = 10;
+    public int TurretNum = 0;
+
+
     public GameObject AbilityOrb;
     public bool AbilitySelecting = false;
     List<string> AbilityList = new List<string>();
@@ -68,5 +72,20 @@ public class AbilityManagement : MonoBehaviour
     {
         TurretAI.instance.shootCoolDown -= 0.2f;
     }
+
+    /*
+     * void UpgradeAbiluty()
+    {
+        switch (a)
+        {
+            case "Turret":
+                TurretNum += 1;
+                break;
+            case "TurretRateUp":
+                TurretAI.instance.shootCoolDown -= 0.2;
+                break;
+        }
+    }
+    */
 }
 
