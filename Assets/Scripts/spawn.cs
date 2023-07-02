@@ -12,7 +12,7 @@ public class spawn : MonoBehaviour
     
     void Start()
     {
-        ball = (GameObject)Resources.Load("ball");
+        ball = (GameObject)Resources.Load("Enemy1");
     }
 
     // Update is called once per frame
