@@ -16,6 +16,7 @@ public class AbilityManagement : MonoBehaviour
 
     public int Multi = 10;
     public int TurretNum = 0;
+    public int SpawnerNum = 1;
 
 
     public GameObject AbilityOrb;
@@ -66,22 +67,22 @@ public class AbilityManagement : MonoBehaviour
         WorldManagement.instance.pause = true;
     }
     void TurretMissileRateUp()
-    {
-        TurretAI.instance.shootCoolDown -= 0.2f;
-    }
+{
+    TurretAI.instance.shootCoolDown -= (float)0.2;
+}
     
-    /*
-     void UpgradeAbiluty()
+    
+    void UpgradeAbiluty(string AbilityName)
     {
-        switch (a)
+        switch (AbilityName)
         {
             case "Turret":
                 TurretNum += 1;
                 break;
             case "TurretRateUp":
-                TurretAI.instance.shootCoolDown -= 0.2;
+                TurretMissileRateUp();
                 break;
         }
-    }*/
+    }
 }
 
