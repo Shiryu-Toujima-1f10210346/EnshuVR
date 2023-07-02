@@ -8,6 +8,18 @@ public class SpawnerManager : MonoBehaviour
     public GameObject Spawner1;
     public GameObject Spawner2;
     public GameObject Spawner3;
+
+    public float SpawnSpan = 1f;
+    public float EnemySpeed = 1f;
+
+    public static SpawnerManager instance;
+    public void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
     /*
     public GameObject Spawner4;
     public GameObject Spawner5;

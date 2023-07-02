@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class spawn : MonoBehaviour
 {
-    public float span = 1f;
     private float currentTime = 0f;
     public GameObject[] enemies;
 
@@ -23,13 +22,13 @@ public class spawn : MonoBehaviour
         {
             currentTime += Time.deltaTime;
 
-            if (currentTime > span)
+            if (currentTime > SpawnerManager.instance.SpawnSpan)
             {
                 int index = Random.Range(0, 5);
                 GameObject obj = Instantiate(enemies[index], transform.position, transform.rotation);
 
-                obj.GetComponent<Rigidbody>().AddForce(transform.forward * Random.Range(100f, 200f));
-                obj.GetComponent<Rigidbody>().AddForce(transform.right * Random.Range(-70f, 70f));
+                obj.GetComponent<Rigidbody>().AddForce(transform.forward * Random.Range(100f, 200f) * SpawnerManager.instance.EnemySpeed);
+                obj.GetComponent<Rigidbody>().AddForce(transform.right * Random.Range(-70f, 70f)    * SpawnerManager.instance.EnemySpeed);
 
                 currentTime = 0f;
             }
