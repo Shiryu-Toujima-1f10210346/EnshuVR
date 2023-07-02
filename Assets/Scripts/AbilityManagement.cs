@@ -1,7 +1,4 @@
-using OculusSampleFramework;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 public class AbilityManagement : MonoBehaviour
@@ -72,9 +69,9 @@ public class AbilityManagement : MonoBehaviour
     {
         TurretAI.instance.shootCoolDown -= 0.2f;
     }
-
+    
     /*
-     * void UpgradeAbiluty()
+     void UpgradeAbiluty()
     {
         switch (a)
         {
@@ -85,7 +82,6 @@ public class AbilityManagement : MonoBehaviour
                 TurretAI.instance.shootCoolDown -= 0.2;
                 break;
         }
-    }
-    */
+    }*/
 }
 
