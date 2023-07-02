@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class AbilityManagement : MonoBehaviour
 {
@@ -18,12 +20,13 @@ public class AbilityManagement : MonoBehaviour
     public int TurretNum = 0;
     public int SpawnerNum = 1;
     public int AbilityCount = 30;
-
+    public GameObject SelectedAbilityListObject;
 
     public GameObject AbilityOrb;
     public bool AbilitySelecting = false;
-    List<string> AbilityList = new List<string>();
-    List<string> RandomAbilityList = new List<string>();
+    public List<string> AbilityList = new List<string>();
+    public List<string> RandomAbilityList = new List<string>();
+    public List<string> SelectedAbilityList = new List<string>();
     public string AbilityName = "SampleText";
     // Start is called before the first frame update
     void Start()
@@ -41,6 +44,12 @@ public class AbilityManagement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //SelectedAbilityListが0じゃなかったら
+        if (SelectedAbilityList.Count != 0)
+        {
+            Debug.Log(SelectedAbilityList);
+            SelectedAbilityListObject.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", SelectedAbilityList.ToString());
+        }
         if (Score.instance.ScoreNum % AbilityCount == 0 && Score.instance.ScoreNum != 0 && AbilitySelecting == false)
         {
             AbilitySelecting = true;
@@ -58,6 +67,7 @@ public class AbilityManagement : MonoBehaviour
                 GameObject orbInstance = Instantiate(AbilityOrb, loc, transform.rotation);
                 orbInstance.GetComponentInChildren<AbilityText>().abilityName = AbilityName;
                 loc += new Vector3(1.0f, 0, 0);
+                orbInstance.name = AbilityName;
             }
             AbilitySelect();
         }

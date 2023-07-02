@@ -61,6 +61,17 @@ public class Bullet : MonoBehaviour
 
 
         }
+
+        if  (collision.gameObject.tag == "Ability")
+        {
+            AbilityManagement.instance.AbilitySelecting = false;
+            WorldManagement.instance.pause = false;
+            //当たったオブジェクトの名前を取得
+            string AbilityName = collision.gameObject.name;
+            AbilityManagement.instance.SelectedAbilityList.Add(AbilityName);
+            Debug.Log(AbilityName);
+        }
+
         Destroy(this.gameObject);
     }
 }
