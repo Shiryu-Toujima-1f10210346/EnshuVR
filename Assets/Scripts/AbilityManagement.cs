@@ -17,6 +17,7 @@ public class AbilityManagement : MonoBehaviour
     public int Multi = 10;
     public int TurretNum = 0;
     public int SpawnerNum = 1;
+    public int AbilityCount = 30;
 
 
     public GameObject AbilityOrb;
@@ -40,7 +41,7 @@ public class AbilityManagement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Score.instance.ScoreNum % 10 == 0 && Score.instance.ScoreNum != 0 && AbilitySelecting == false)
+        if (Score.instance.ScoreNum % AbilityCount == 0 && Score.instance.ScoreNum != 0 && AbilitySelecting == false)
         {
             AbilitySelecting = true;
             //vector3のlocを定義 transform.position
