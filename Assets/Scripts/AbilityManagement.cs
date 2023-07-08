@@ -24,7 +24,7 @@ public class AbilityManagement : MonoBehaviour
 
     public GameObject AbilityOrb;
     public bool AbilitySelecting = false;
-    public List<string> AbilityList = new List<string>();
+    public List<string> AbilityList = new() { "Multi", "Turret", "TurretRateUp" };
     public List<string> RandomAbilityList = new List<string>();
     public List<string> SelectedAbilityList = new List<string>();
     public string AbilityName = "SampleText";
@@ -32,11 +32,9 @@ public class AbilityManagement : MonoBehaviour
     void Start()
     {
 
-        AbilityList.Add("Multi");
-        AbilityList.Add("Turret");
-        AbilityList.Add("TurretMissileRateUp");
-        AbilityList.Add("Hogehoge");
-        AbilityList.Add("INIAD");
+        // AbilityList.Add("Multi");
+        // AbilityList.Add("Turret");
+        // AbilityList.Add("TurretMissileRateUp");
 
         AbilityOrb = (GameObject)Resources.Load("AbilityOrb");
     }
@@ -44,10 +42,10 @@ public class AbilityManagement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         //SelectedAbilityListが0じゃなかったら
         if (SelectedAbilityList.Count != 0)
         {
-            Debug.Log(SelectedAbilityList);
             SelectedAbilityListObject.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", SelectedAbilityList.ToString());
         }
         if (Score.instance.ScoreNum % AbilityCount == 0 && Score.instance.ScoreNum != 0 && AbilitySelecting == false)
@@ -59,6 +57,8 @@ public class AbilityManagement : MonoBehaviour
 
             for (int i = 0; i < 3; i++)
             {
+                Debug.Log(AbilityList.Count);
+                //2週目以降はrangeがおかしくなる
                 int index = Random.Range(0, AbilityList.Count);
                 RandomAbilityList.Add(AbilityList[index]);
                 AbilityList.RemoveAt(index);
