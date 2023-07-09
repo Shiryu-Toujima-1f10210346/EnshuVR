@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.15896621, g: 0.51753515, b: 1.0392404, a: 1}
+  m_IndirectSpecularColor: {r: 0.15884396, g: 0.5173062, b: 1.039135, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1782,7 +1782,6 @@ MonoBehaviour:
   AbilityOrb: {fileID: 0}
   AbilitySelecting: 0
   AbilityList: []
-  RandomAbilityList: []
   SelectedAbilityList: []
   AbilityName: SampleText
 --- !u!114 &746246273

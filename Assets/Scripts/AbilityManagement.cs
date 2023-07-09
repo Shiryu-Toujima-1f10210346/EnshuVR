@@ -25,12 +25,12 @@ public class AbilityManagement : MonoBehaviour
     public GameObject AbilityOrb;
     public bool AbilitySelecting = false;
     public List<string> AbilityList = new() { "Multi", "Turret", "TurretRateUp" };
-    public List<string> RandomAbilityList = new List<string>();
     public List<string> SelectedAbilityList = new List<string>();
     public string AbilityName = "SampleText";
     // Start is called before the first frame update
     void Start()
     {
+        AbilityList = new() { "Multi", "Turret", "TurretRateUp" };
 
         // AbilityList.Add("Multi");
         // AbilityList.Add("Turret");
@@ -54,20 +54,16 @@ public class AbilityManagement : MonoBehaviour
             //vector3のlocを定義 transform.position
             Vector3 loc = new(transform.position.x - 1.0f, transform.position.y + 0.5f, transform.position.z + 1.0f);
             //AbilityListからランダムに3つ取得しRandomAbilityListに格納
-
+            Debug.Log(AbilityList[0]);
+            Debug.Log(AbilityList[1]);
+            Debug.Log(AbilityList[2]);
             for (int i = 0; i < 3; i++)
             {
-                Debug.Log(AbilityList.Count);
-                //2週目以降はrangeがおかしくなる
-                int index = Random.Range(0, AbilityList.Count);
-                RandomAbilityList.Add(AbilityList[index]);
-                AbilityList.RemoveAt(index);
-                AbilityName = RandomAbilityList[i];
-                Debug.Log(AbilityName);
-                GameObject orbInstance = Instantiate(AbilityOrb, loc, transform.rotation);
-                orbInstance.GetComponentInChildren<AbilityText>().abilityName = AbilityName;
-                loc += new Vector3(1.0f, 0, 0);
-                orbInstance.name = AbilityName;
+            AbilityName = AbilityList[i];
+            GameObject orbInstance = Instantiate(AbilityOrb, loc, transform.rotation);
+            orbInstance.GetComponentInChildren<AbilityText>().abilityName = AbilityName;
+            loc += new Vector3(1.0f, 0, 0);
+            orbInstance.name = AbilityName;
             }
             AbilitySelect();
         }
