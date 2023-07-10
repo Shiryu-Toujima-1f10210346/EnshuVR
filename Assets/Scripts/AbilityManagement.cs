@@ -50,15 +50,12 @@ public class AbilityManagement : MonoBehaviour
         }
         if (Score.instance.ScoreNum % AbilityCount == 0 && Score.instance.ScoreNum != 0 && AbilitySelecting == false)
         {
-            AbilitySelecting = true;
             //vector3のlocを定義 transform.position
             Vector3 loc = new(transform.position.x - 1.0f, transform.position.y + 0.5f, transform.position.z + 1.0f);
             //AbilityListからランダムに3つ取得しRandomAbilityListに格納
-            Debug.Log(AbilityList[0]);
-            Debug.Log(AbilityList[1]);
-            Debug.Log(AbilityList[2]);
             for (int i = 0; i < 3; i++)
             {
+            Debug.Log("Generating AbilityOrb");
             AbilityName = AbilityList[i];
             GameObject orbInstance = Instantiate(AbilityOrb, loc, transform.rotation);
             orbInstance.GetComponentInChildren<AbilityText>().abilityName = AbilityName;
@@ -71,6 +68,7 @@ public class AbilityManagement : MonoBehaviour
 
     void AbilitySelect()
     {
+        AbilitySelecting = true;
         WorldManagement.instance.pause = true;
     }
     void TurretMissileRateUp()
