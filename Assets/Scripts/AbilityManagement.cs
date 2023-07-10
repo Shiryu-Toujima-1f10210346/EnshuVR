@@ -21,9 +21,8 @@ public class AbilityManagement : MonoBehaviour
     public int SpawnerNum = 1;
     public int AbilityCount = 30;
     public GameObject SelectedAbilityListObject;
-
     public GameObject AbilityOrb;
-    public bool AbilitySelecting = false;
+    public bool AbilitySelecting;
     public List<string> AbilityList = new() { "Multi", "Turret", "TurretRateUp" };
     public List<string> SelectedAbilityList = new List<string>();
     public string AbilityName = "SampleText";
@@ -35,6 +34,7 @@ public class AbilityManagement : MonoBehaviour
         // AbilityList.Add("Multi");
         // AbilityList.Add("Turret");
         // AbilityList.Add("TurretMissileRateUp");
+        AbilitySelecting = false;
 
         AbilityOrb = (GameObject)Resources.Load("AbilityOrb");
     }
@@ -44,50 +44,28 @@ public class AbilityManagement : MonoBehaviour
     {
 
         //SelectedAbilityListが0じゃなかったら
-        if (SelectedAbilityList.Count != 0)
-        {
-            SelectedAbilityListObject.GetComponent<TextMeshProUGUI>().text = string.Format("{0}", SelectedAbilityList.ToString());
-        }
+if (SelectedAbilityList.Count != 0)
+{
+    SelectedAbilityListObject.GetComponent<TextMeshProUGUI>().text = string.Join("\n", SelectedAbilityList);
+}
         if (Score.instance.ScoreNum % AbilityCount == 0 && Score.instance.ScoreNum != 0 && AbilitySelecting == false)
         {
+            AbilitySelecting = true;
+            WorldManagement.instance.pause = true;
+            fire.instance.MaxBulletsAmount = 1;
+            fire.instance.CullentBulletsAmount = 1;
             //vector3のlocを定義 transform.position
             Vector3 loc = new(transform.position.x - 1.0f, transform.position.y + 0.5f, transform.position.z + 1.0f);
-            //AbilityListからランダムに3つ取得しRandomAbilityListに格納
             for (int i = 0; i < 3; i++)
             {
-            Debug.Log("Generating AbilityOrb");
             AbilityName = AbilityList[i];
             GameObject orbInstance = Instantiate(AbilityOrb, loc, transform.rotation);
             orbInstance.GetComponentInChildren<AbilityText>().abilityName = AbilityName;
             loc += new Vector3(1.0f, 0, 0);
             orbInstance.name = AbilityName;
             }
-            AbilitySelect();
         }
     }
-
-    void AbilitySelect()
-    {
-        AbilitySelecting = true;
-        WorldManagement.instance.pause = true;
-    }
-    void TurretMissileRateUp()
-{
-    TurretAI.instance.shootCoolDown -= (float)0.2;
-}
     
-    
-    void UpgradeAbiluty(string AbilityName)
-    {
-        switch (AbilityName)
-        {
-            case "Turret":
-                TurretNum += 1;
-                break;
-            case "TurretRateUp":
-                TurretMissileRateUp();
-                break;
-        }
-    }
 }
 

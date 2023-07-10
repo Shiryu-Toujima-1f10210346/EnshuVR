@@ -18,16 +18,14 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Oculus.Interaction.DistanceReticles
 {
     public abstract class DistantInteractionLineVisual : MonoBehaviour
     {
         [SerializeField, Interface(typeof(IDistanceInteractor))]
-        private MonoBehaviour _distanceInteractor;
+        private UnityEngine.Object _distanceInteractor;
         public IDistanceInteractor DistanceInteractor { get; protected set; }
 
         [SerializeField]
@@ -44,7 +42,7 @@ namespace Oculus.Interaction.DistanceReticles
             }
         }
 
-        private List<Vector3> _linePoints;
+        private Vector3[] _linePoints;
 
         [SerializeField]
         private bool _visibleDuringNormal;
@@ -70,8 +68,8 @@ namespace Oculus.Interaction.DistanceReticles
         protected virtual void Start()
         {
             this.BeginStart(ref _started);
-            Assert.IsNotNull(DistanceInteractor);
-            _linePoints = new List<Vector3>(new Vector3[NumLinePoints]);
+            this.AssertField(DistanceInteractor, nameof(DistanceInteractor));
+            _linePoints = new Vector3[NumLinePoints];
             this.EndStart(ref _started);
         }
 
@@ -80,6 +78,7 @@ namespace Oculus.Interaction.DistanceReticles
             if (_started)
             {
                 DistanceInteractor.WhenStateChanged += HandleStateChanged;
+                DistanceInteractor.WhenPostprocessed += HandlePostProcessed;
             }
         }
 
@@ -88,14 +87,7 @@ namespace Oculus.Interaction.DistanceReticles
             if (_started)
             {
                 DistanceInteractor.WhenStateChanged -= HandleStateChanged;
-            }
-        }
-
-        protected virtual void Update()
-        {
-            if (_shouldDrawLine)
-            {
-                UpdateLine();
+                DistanceInteractor.WhenPostprocessed -= HandlePostProcessed;
             }
         }
 
@@ -113,7 +105,7 @@ namespace Oculus.Interaction.DistanceReticles
                 case InteractorState.Hover:
                     if (args.PreviousState == InteractorState.Normal)
                     {
-                        InteractableSet(DistanceInteractor.Candidate as MonoBehaviour);
+                        InteractableSet(DistanceInteractor.DistanceInteractable);
                     }
                     break;
             }
@@ -133,19 +125,31 @@ namespace Oculus.Interaction.DistanceReticles
                 _shouldDrawLine = _visibleDuringNormal;
             }
         }
-        protected virtual void InteractableSet(MonoBehaviour interactable)
+
+        private void HandlePostProcessed()
         {
-            if (interactable == null)
+            if (_shouldDrawLine)
             {
+                UpdateLine();
+            }
+            else
+            {
+                HideLine();
+            }
+        }
+
+        protected virtual void InteractableSet(IRelativeToRef interactable)
+        {
+            Component component = interactable as Component;
+            if (component == null)
+            {
+                _target = null;
                 return;
             }
-            if (interactable.TryGetComponent(out IReticleData reticleData))
+
+            if (!component.TryGetComponent(out _target))
             {
-                _target = reticleData;
-            }
-            else if (interactable is IDistanceInteractable)
-            {
-                _dummyTarget.Target = (interactable as IDistanceInteractable).RelativeTo;
+                _dummyTarget.Target = interactable.RelativeTo;
                 _target = _dummyTarget;
             }
         }
@@ -157,10 +161,11 @@ namespace Oculus.Interaction.DistanceReticles
 
         private void UpdateLine()
         {
-            ConicalFrustum frustum = DistanceInteractor.PointerFrustum;
-            Vector3 start = frustum.StartPoint + frustum.Direction * VisualOffset;
-            Vector3 end = TargetHit(frustum);
-            Vector3 middle = start + frustum.Direction * Vector3.Distance(start, end) * 0.5f;
+            Vector3 direction = DistanceInteractor.Origin.forward;
+            Vector3 origin = DistanceInteractor.Origin.position;
+            Vector3 start = origin + direction * VisualOffset;
+            Vector3 end = TargetHit(DistanceInteractor.HitPoint);
+            Vector3 middle = start + direction * Vector3.Distance(start, end) * 0.5f;
 
             for (int i = 0; i < NumLinePoints; i++)
             {
@@ -172,16 +177,18 @@ namespace Oculus.Interaction.DistanceReticles
             RenderLine(_linePoints);
         }
 
-        protected abstract void RenderLine(List<Vector3> linePoints);
+        protected abstract void RenderLine(Vector3[] linePoints);
+        protected abstract void HideLine();
 
-        protected Vector3 TargetHit(ConicalFrustum frustum)
+        protected Vector3 TargetHit(Vector3 hitPoint)
         {
             if (_target != null)
             {
-                return _target.GetTargetHit(frustum);
+                return _target.ProcessHitPoint(hitPoint);
             }
 
-            return frustum.StartPoint + frustum.Direction * _targetlessLength;
+            return DistanceInteractor.Origin.position
+                + DistanceInteractor.Origin.forward * _targetlessLength;
         }
 
         protected static Vector3 EvaluateBezier(Vector3 start, Vector3 middle, Vector3 end, float t)
@@ -197,7 +204,7 @@ namespace Oculus.Interaction.DistanceReticles
         {
             public Transform Target { get; set; }
 
-            public Vector3 GetTargetHit(ConicalFrustum frustum)
+            public Vector3 ProcessHitPoint(Vector3 hitPoint)
             {
                 return Target.position;
             }
@@ -205,14 +212,14 @@ namespace Oculus.Interaction.DistanceReticles
 
         #region Inject
 
-        public void InjectAllDistantInteractionLineVisual(IDistanceInteractor interactor, Material material)
+        public void InjectAllDistantInteractionLineVisual(IDistanceInteractor interactor)
         {
             InjectDistanceInteractor(interactor);
         }
 
         public void InjectDistanceInteractor(IDistanceInteractor interactor)
         {
-            _distanceInteractor = interactor as MonoBehaviour;
+            _distanceInteractor = interactor as UnityEngine.Object;
             DistanceInteractor = interactor;
         }
 

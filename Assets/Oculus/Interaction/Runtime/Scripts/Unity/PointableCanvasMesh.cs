@@ -19,40 +19,42 @@
  */
 
 using UnityEngine;
-using UnityEngine.Assertions;
 using Oculus.Interaction.UnityCanvas;
+using UnityEngine.Serialization;
 
 namespace Oculus.Interaction
 {
     public class PointableCanvasMesh : PointableElement
     {
+        [Tooltip("This CanvasMesh determines the Pose of PointerEvents.")]
         [SerializeField]
-        private CanvasRenderTextureMesh _canvasRenderTextureMesh;
+        [FormerlySerializedAs("_canvasRenderTextureMesh")]
+        private CanvasMesh _canvasMesh;
 
         protected override void Start()
         {
             base.Start();
-            Assert.IsNotNull(_canvasRenderTextureMesh);
+            this.AssertField(_canvasMesh, nameof(_canvasMesh));
         }
 
         public override void ProcessPointerEvent(PointerEvent evt)
         {
             Vector3 transformPosition =
-                _canvasRenderTextureMesh.ImposterToCanvasTransformPoint(evt.Pose.position);
+                _canvasMesh.ImposterToCanvasTransformPoint(evt.Pose.position);
             Pose transformedPose = new Pose(transformPosition, evt.Pose.rotation);
-            base.ProcessPointerEvent(new PointerEvent(evt.Identifier, evt.Type, transformedPose));
+            base.ProcessPointerEvent(new PointerEvent(evt.Identifier, evt.Type, transformedPose, evt.Data));
         }
 
         #region Inject
 
-        public void InjectAllCanvasMeshPointable(CanvasRenderTextureMesh canvasRenderTextureMesh)
+        public void InjectAllCanvasMeshPointable(CanvasMesh canvasMesh)
         {
-            InjectCanvasRenderTextureMesh(canvasRenderTextureMesh);
+            InjectCanvasMesh(canvasMesh);
         }
 
-        public void InjectCanvasRenderTextureMesh(CanvasRenderTextureMesh canvasRenderTextureMesh)
+        public void InjectCanvasMesh(CanvasMesh canvasMesh)
         {
-            _canvasRenderTextureMesh = canvasRenderTextureMesh;
+            _canvasMesh = canvasMesh;
         }
 
         #endregion

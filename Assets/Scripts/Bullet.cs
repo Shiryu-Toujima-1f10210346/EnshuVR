@@ -70,8 +70,33 @@ public class Bullet : MonoBehaviour
             string AbilityName = collision.gameObject.name;
             AbilityManagement.instance.SelectedAbilityList.Add(AbilityName);
             Debug.Log(AbilityName);
+            UpgradeAbiluty(AbilityName);
         }
 
         Destroy(this.gameObject);
+    }
+    void UpgradeAbiluty(string AbilityName)
+    {
+        switch (AbilityName)
+        {
+            case "Turret":
+                AbilityManagement.instance.TurretNum += 1;
+                break;
+            case "TurretRateUp":
+                TurretAI.instance.shootCoolDown -= (float)0.2;
+                break;
+        }
+        fire.instance.MaxBulletsAmount = 50;
+        WorldManagement.instance.pause = false;
+        AbilityManagement.instance.AbilitySelecting = false;
+        //AbilityOrb Objectをすべて消す
+        GameObject[] AbilityOrbObjects = GameObject.FindGameObjectsWithTag("Ability");
+        foreach (GameObject AbilityOrbObject in AbilityOrbObjects)
+        {
+            Destroy(AbilityOrbObject);
+            Debug.Log("AbilityOrbObject Destroyed");
+        }
+
+
     }
 }

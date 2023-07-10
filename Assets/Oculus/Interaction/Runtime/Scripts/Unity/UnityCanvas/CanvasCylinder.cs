@@ -19,14 +19,14 @@
  */
 
 using System;
-using UnityEngine.Assertions;
+using Oculus.Interaction.Surfaces;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
 namespace Oculus.Interaction.UnityCanvas
 {
-    public class CanvasCylinder : CanvasRenderTextureMesh, ICurvedPlane
+    public class CanvasCylinder : CanvasMesh, ICurvedPlane, ICylinderClipper
     {
         [Serializable]
         public struct MeshGenerationSettings
@@ -44,20 +44,21 @@ namespace Oculus.Interaction.UnityCanvas
         public const int MIN_RESOLUTION = 2;
 
         [SerializeField]
+        [Tooltip("The cylinder used to dictate the position and radius of the mesh.")]
+        private Cylinder _cylinder;
+
+        [SerializeField]
+        [Tooltip("Determines how the mesh is projected on the cylinder wall. " +
+            "Vertical results in a left-to-right curvature, Horizontal results in a top-to-bottom curvature.")]
+        private CylinderOrientation _orientation = CylinderOrientation.Vertical;
+
+        [SerializeField]
         private MeshGenerationSettings _meshGeneration = new MeshGenerationSettings()
         {
             VerticesPerDegree = 1.4f,
             MaxHorizontalResolution = 128,
             MaxVerticalResolution = 32
         };
-
-        [SerializeField]
-        private Cylinder _cylinder;
-
-        [SerializeField]
-        private CylinderOrientation _orientation;
-
-        protected override OVROverlay.OverlayShape OverlayShape => OVROverlay.OverlayShape.Cylinder;
 
         public float Radius => _cylinder.Radius;
         public Cylinder Cylinder => _cylinder;
@@ -68,10 +69,16 @@ namespace Oculus.Interaction.UnityCanvas
 
         private float CylinderRelativeScale => _cylinder.transform.lossyScale.x / transform.lossyScale.x;
 
+        public bool GetCylinderSegment(out CylinderSegment segment)
+        {
+            segment = new CylinderSegment(Rotation, ArcDegrees, Bottom, Top);
+            return _started && isActiveAndEnabled;
+        }
+
         protected override void Start()
         {
             this.BeginStart(ref _started, () => base.Start());
-            Assert.IsNotNull(_cylinder);
+            this.AssertField(_cylinder, nameof(_cylinder));
             this.EndStart(ref _started);
         }
 
@@ -99,21 +106,6 @@ namespace Oculus.Interaction.UnityCanvas
             base.UpdateImposter();
             UpdateMeshPosition();
             UpdateCurvedPlane();
-        }
-
-        protected override void UpdateOverlayPositionAndScale()
-        {
-            if (_overlay == null)
-            {
-                return;
-            }
-
-            Vector2Int resolution = _canvasRenderTexture.GetBaseResolutionToUse();
-            _overlay.transform.localPosition = new Vector3(0, 0, -Radius) - _runtimeOffset;
-            _overlay.transform.localScale =
-                new Vector3(_canvasRenderTexture.PixelsToUnits(resolution.x) / transform.lossyScale.x,
-                            _canvasRenderTexture.PixelsToUnits(resolution.y) / transform.lossyScale.y,
-                            Radius);
         }
 
         protected override Vector3 MeshInverseTransform(Vector3 localPosition)
@@ -301,10 +293,11 @@ namespace Oculus.Interaction.UnityCanvas
         #region Inject
 
         public void InjectAllCanvasCylinder(CanvasRenderTexture canvasRenderTexture,
+                                            MeshFilter meshFilter,
                                             Cylinder cylinder,
                                             CylinderOrientation orientation)
         {
-            InjectAllCanvasRenderTextureMesh(canvasRenderTexture);
+            InjectAllCanvasMesh(canvasRenderTexture, meshFilter);
             InjectCylinder(cylinder);
             InjectOrientation(orientation);
         }

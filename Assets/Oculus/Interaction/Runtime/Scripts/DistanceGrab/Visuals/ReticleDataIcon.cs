@@ -41,9 +41,6 @@ namespace Oculus.Interaction.DistanceReticles
             }
         }
 
-        [SerializeField, Optional]
-        private Collider[] _colliders;
-
         [SerializeField]
         [Range(0f, 1f)]
         private float _snappiness;
@@ -59,8 +56,6 @@ namespace Oculus.Interaction.DistanceReticles
             }
         }
 
-        public Transform Target => this.transform;
-
         public Vector3 GetTargetSize()
         {
             if (_renderer != null)
@@ -70,25 +65,9 @@ namespace Oculus.Interaction.DistanceReticles
             return this.transform.localScale;
         }
 
-        public Vector3 GetTargetHit(ConicalFrustum frustum)
+        public Vector3 ProcessHitPoint(Vector3 hitPoint)
         {
-            float bestScore = float.MinValue;
-            Vector3 bestPoint = Target.position;
-
-            if (_colliders == null)
-            {
-                return bestPoint;
-            }
-
-            foreach (Collider collider in _colliders)
-            {
-                Vector3 point = frustum.NearestColliderHit(collider, out float score);
-                if (score > bestScore)
-                {
-                    bestPoint = point;
-                }
-            }
-            return Vector3.Lerp(bestPoint, Target.position, _snappiness);
+            return Vector3.Lerp(hitPoint, this.transform.position, _snappiness);
         }
 
         #region Inject
@@ -97,10 +76,6 @@ namespace Oculus.Interaction.DistanceReticles
             _renderer = renderer;
         }
 
-        public void InjectOptionalColliders(Collider[] colliders)
-        {
-            _colliders = colliders;
-        }
         #endregion
     }
 }

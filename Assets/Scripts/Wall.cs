@@ -9,6 +9,8 @@ public class Wall : MonoBehaviour
     AudioSource WallDamageSESource;
     public int WallHP = 10;
     public static Wall instance;
+    public bool isGameOver = false;
+    
     public void Awake()
     {
         if (instance == null)
@@ -23,6 +25,15 @@ public class Wall : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(isGameOver == true)
+        {
+            
+    fire.instance.MaxBulletsAmount = 0;
+    fire.instance.CullentBulletsAmount = 0;
+    WorldManagement.instance.pause = true;
+    
+
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -35,6 +46,7 @@ public class Wall : MonoBehaviour
             if (WallHP <= 0)
             {
                 Debug.Log("GameOver!");
+                isGameOver = true;
                 //GameOver
             }
             Destroy(collision.gameObject);

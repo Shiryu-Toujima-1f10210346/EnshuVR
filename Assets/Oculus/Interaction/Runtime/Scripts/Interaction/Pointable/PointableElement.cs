@@ -34,7 +34,7 @@ namespace Oculus.Interaction
         private bool _addNewPointsToFront = false;
 
         [SerializeField, Interface(typeof(IPointableElement)), Optional]
-        private MonoBehaviour _forwardElement;
+        private UnityEngine.Object _forwardElement;
 
         public IPointableElement ForwardElement { get; private set; }
 
@@ -91,7 +91,7 @@ namespace Oculus.Interaction
 
             if (_forwardElement)
             {
-                Assert.IsNotNull(ForwardElement);
+                this.AssertField(ForwardElement, nameof(ForwardElement));
             }
 
             _points = new List<Pose>();
@@ -119,6 +119,11 @@ namespace Oculus.Interaction
         {
             if (_started)
             {
+                while (_selectingPoints.Count > 0)
+                {
+                    Cancel(new PointerEvent(_selectingPointIds[0], PointerEventType.Cancel, _selectingPoints[0]));
+                }
+
                 if (ForwardElement != null)
                 {
                     ForwardElement.WhenPointerEventRaised -= HandlePointerEventRaised;
@@ -265,7 +270,6 @@ namespace Oculus.Interaction
             PointableElementUpdated(evt);
         }
 
-
         protected virtual void PointableElementUpdated(PointerEvent evt)
         {
             if (ForwardElement != null)
@@ -280,7 +284,7 @@ namespace Oculus.Interaction
         public void InjectOptionalForwardElement(IPointableElement forwardElement)
         {
             ForwardElement = forwardElement;
-            _forwardElement = forwardElement as MonoBehaviour;
+            _forwardElement = forwardElement as UnityEngine.Object;
         }
 
         #endregion
